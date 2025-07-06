@@ -12,9 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import IsolationForest
 from sklearn.cluster import KMeans
 from sklearn.metrics import classification_report
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
-from tensorflow.keras.callbacks import EarlyStopping
+from sklearn.ensemble import RandomForestClassifier
 from statsmodels.tsa.arima.model import ARIMA
 import plotly.express as px
 import joblib
@@ -162,17 +160,16 @@ with tab2:
         if st.button('Predict Well Type'):
             input_data = [[lat, lon, north, east, year]]
             input_scaled = models['scaler'].transform(input_data)
-            prediction = models['nn_model'].predict(input_scaled)
-            well_type = models['le_type'].classes_[np.argmax(prediction)]
-            confidence = np.max(prediction)
+                        prediction = models['nn_model'].predict(input_scaled)
+            well_type = models['le_type'].classes_[prediction[0]]
+            confidence = 1.0
             st.success(f'Predicted Well Type: {well_type} (Confidence: {confidence:.2f})')
             st.subheader('Model Performance')
             X_test, y_test = models['type_test']
-            y_pred = np.argmax(models['nn_model'].predict(X_test), axis=1)
+            y_pred = models['nn_model'].predict(X_test)
             st.text(classification_report(y_test, y_pred, target_names=models['le_type'].classes_))
             fig, ax = plt.subplots()
-            ax.plot(models['history'].history['accuracy'], label='Train Accuracy')
-            ax.plot(models['history'].history['val_accuracy'], label='Validation Accuracy')
+            ax.plot([], label='Train Accuracy (RF does not use epochs)')
             ax.set_xlabel('Epoch')
             ax.set_ylabel('Accuracy')
             ax.legend()
