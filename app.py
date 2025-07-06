@@ -160,7 +160,7 @@ with tab2:
         if st.button('Predict Well Type'):
             input_data = [[lat, lon, north, east, year]]
             input_scaled = models['scaler'].transform(input_data)
-                        prediction = models['nn_model'].predict(input_scaled)
+            prediction = models['nn_model'].predict(input_scaled)
             well_type = models['le_type'].classes_[prediction[0]]
             confidence = 1.0
             st.success(f'Predicted Well Type: {well_type} (Confidence: {confidence:.2f})')
